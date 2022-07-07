@@ -179,13 +179,13 @@ class GdbTracer:
 
         self.is_timeout = False
         self.p = subprocess.Popen(command, shell=True, cwd=self.workspace, stdin=subprocess.PIPE,
-                                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, universal_newlines=True)
 
         ret = True
 
         output = b""
         if self.debug:
-            log_file = open("debug.log", "wb")
+            log_file = open("debug.log", "w")
 
         timer = Timer(timeout, self.timeout_handler)
         try:
@@ -197,24 +197,24 @@ class GdbTracer:
                 output += l
                 if self.debug:
                     print(l)
-                    log_file.write(l + b"\n")
-                if b"received signal SIGTRAP" in l:
+                    log_file.write(l + "\n")
+                if "received signal SIGTRAP" in l:
                     space_count = 0
-                    self.p.stdin.write(b"c\n")
-                elif l.strip() == b"":
+                    self.p.stdin.write("c\n")
+                elif l.strip() == "":
                     space_count += 1
                     if space_count == 20:
                         break
-                elif b"[trapfuzzer] save_bb_trace" in l:
+                elif "[trapfuzzer] save_bb_trace" in l:
                     break
         except Exception as e:
             res = self.p.stdout.read()
-            if b"[trapfuzzer] save_bb_trace" not in res:
+            if "[trapfuzzer] save_bb_trace" not in res:
                 dst_file_path = "{}/tracer-exception-{}.bin".format(self.workspace, self.exception_case_count)
                 log_path = "{}/tracer-exception-{}.log".format(self.workspace, self.exception_case_count)
                 shutil.copyfile(self.current_input_file, dst_file_path)
 
-                with open(log_path, "wb") as fp:
+                with open(log_path, "w") as fp:
                     fp.write(output + res)
 
                 self.exception_case_count += 1
@@ -336,7 +336,7 @@ class GdbRunTracer:
         process_stdout = open("stdout.txt", "w")
 
         self.process = subprocess.Popen(command, shell=True, cwd=self.workspace, stdin=subprocess.PIPE,
-                                        stdout=process_stdout.fileno(), stderr=subprocess.STDOUT)
+                                        stdout=process_stdout.fileno(), stderr=subprocess.STDOUT, bufsize=1, universal_newlines=True)
 
         self.client_sock, _ = self.server_sock.accept()
 

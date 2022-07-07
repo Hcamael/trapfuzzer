@@ -9,5 +9,5 @@ class RadamsaMutator:
     def mutate(self, input, output):
         command = "./radamsa {} -o {}".format(input, output)
         p = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE,
-                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, universal_newlines=True)
         p.wait()

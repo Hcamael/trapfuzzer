@@ -23,7 +23,7 @@ class AnalyseThread(threading.Thread):
         # print(input_path)
         command = '"{}" -A -c -S{} {}'.format(ida_path, os.path.abspath(script_path), input_path)
         print(command)
-        p = subprocess.Popen(command, shell=True, cwd=os.getcwd())
+        p = subprocess.Popen(command, shell=True, cwd=os.getcwd(), bufsize=1, universal_newlines=True)
         p.wait()
 
         if p.stdout:

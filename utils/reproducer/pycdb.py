@@ -232,7 +232,7 @@ class CdbReaderThread(threading.Thread):
 
     def run(self):
         # print('ReaderThread.run()')
-        curline = bytes()
+        curline = ""
         # read from the pipe
         while not self.stop_reading:
             ch = self.pipe.stdout.read(1)
@@ -243,11 +243,11 @@ class CdbReaderThread(threading.Thread):
                 # print('ReaderThread.run(): read nothing')
                 break
             if PYTHON3:
-                self.queue.put(OutputEvent(ch.decode("ISO-8859-1")))
+                self.queue.put(OutputEvent(ch))
             else:
                 self.queue.put(OutputEvent(ch))
             curline += ch
-            if b"debugee initialization failed" in curline.lower() or b"win32 error 0n216" in curline.lower():
+            if "debugee initialization failed" in curline.lower() or "win32 error 0n216" in curline.lower():
                 print("cdb.exe error: \r\n{}".format(curline))
                 self.queue.put(PipeClosedEvent())
                 break
@@ -256,7 +256,7 @@ class CdbReaderThread(threading.Thread):
                     self.process_line(curline.decode("ISO-8859-1"))
                 else:
                     self.process_line(curline)
-                curline = bytes()
+                curline = ""
 
 
 class Registers(object):
@@ -383,7 +383,7 @@ class PyCdb(object):
     def _create_pipe(self, cmdline):
         self.pipe = subprocess.Popen(cmdline,
                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE,
-                                     creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
+                                     creationflags=subprocess.CREATE_NEW_PROCESS_GROUP, bufsize=1, universal_newlines=True)
         self.qthread = CdbReaderThread(self.pipe)
         self.qthread.start()
         self.pipe_closed = False

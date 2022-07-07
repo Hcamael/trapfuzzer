@@ -63,7 +63,7 @@ class DynamorioTracer:
         # print(" ".join(self.command_list))
         process_stdout = open("stdout.txt", "w")
         self.process = subprocess.Popen(" ".join(self.command_list), shell=True, cwd=self.workspace, stdin=subprocess.PIPE,
-                                        stdout=process_stdout.fileno(), stderr=subprocess.STDOUT)
+                                        stdout=process_stdout.fileno(), stderr=subprocess.STDOUT, bufsize=1, universal_newlines=True)
 
         timer = Timer(timeout, self.timeout_handler)
 
