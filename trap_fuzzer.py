@@ -241,11 +241,11 @@ class Fuzzer:
                     'stop', 'testcase (t)', 'crash (c)', 'timeout_ratio (tr)', 'import_case dir', 'quit (q)']
         help_info = "\n".join(cmd_help) + "\n"
         while True:
-            cmd = sock.recv(100).strip()
-            cmd_list = cmd.split(b" ")
+            cmd = sock.recv(100).strip().decode()
+            cmd_list = cmd.split(" ")
             data = ""
             try:
-                if cmd_list[0] in [b"s", b"status"]:
+                if cmd_list[0] in ["s", "status"]:
                     data = "\nstatus\n"
                     data += "stage: {}\n".format(self.exec_stage)
                     data += "total dos:      {}\n".format(len(self.dos_list))
