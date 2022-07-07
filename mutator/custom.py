@@ -12,23 +12,23 @@ class MutatorBase:
         quotes = False
         f.seek(pos)
         for x in range(len):
-            c = f.read(1).decode()
-            if c == "<" or c == ">" or c == "\"":
+            c = f.read(1)
+            if c == b"<" or c == b">" or c == b'"':
                 return False
 
-        c = f.read(1).decode()
+        c = f.read(1)
         quotes = 0
-        while c != "" and c != None:
-            if c == "\"":
+        while c != b"" and c != None:
+            if c == b'"':
                 quotes += 1
-            if c == ">":
+            if c == b">":
                 if quotes % 2 == 0:
                     return False
                 else:
                     return True
-            if c == "<":
+            if c == b"<":
                 return True
-            c = f.read(1).decode()
+            c = f.read(1)
         return False
 
     def restore(self, src, dest, signature):
@@ -41,7 +41,7 @@ class MutatorBase:
             pos = int(sign[0:8], 16)
             val = int(sign[8:10], 16)
             f.seek(pos)
-            f.write(bytes([chr(val)]))
+            f.write(bytes([val]))
         f.close()
 
     def setConf(self, conf):
@@ -79,16 +79,16 @@ class FileByteValues(MutatorBase):
                 pos = self.myRand(self.skip, size-len(newVal))
                 for y in range(len(newVal)):
                     f.seek(pos+y)
-                    oldVal = f.read(1).decode()
+                    oldVal = f.read(1)
                     f.seek(pos+y)
-                    f.write(bytes([chr(newVal[y])]))
+                    f.write(bytes([newVal[y]]))
                     ret_signature.append("%08X%02X%02X" %
-                                         (pos+y, ord(oldVal), newVal[y]))
+                                         (pos+y, oldVal[0], newVal[y]))
 
                     r.append("{:02X}".format(pos + y))
 
                     ret_text += "Mutating byte at 0x%X (%d) from 0x%02X to 0x%02X\n" % (
-                        pos, pos, ord(oldVal), newVal[y])
+                        pos, pos, oldVal[0], newVal[y])
             f.close()
         except:
             raise  # Just for now
@@ -129,13 +129,13 @@ class FileBitFlipping(MutatorBase):
             for x in range(int(count)):
                 pos = self.myRand(self.skip, size-1)
                 f.seek(pos)
-                c = f.read(1).decode()
+                c = f.read(1)
                 if c != None:
-                    val = ord(c)
+                    val = c[0]
                     oldVal = val
                     f.seek(pos)
                     val = self.modify(val)
-                    f.write(bytes([chr(val)]))
+                    f.write(bytes([val]))
                     ret_signature.append("%08X%02X%02X" % (pos, oldVal, val))
                     ret_text += "Mutating byte at 0x%X (%d) from 0x%02X to 0x%02X\n" % (
                         pos, pos, oldVal, val)
