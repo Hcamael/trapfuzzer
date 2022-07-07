@@ -183,7 +183,7 @@ class GdbTracer:
 
         ret = True
 
-        output = ""
+        output = b""
         if self.debug:
             log_file = open("debug.log", "w")
 
@@ -197,24 +197,24 @@ class GdbTracer:
                 output += l
                 if self.debug:
                     print(l)
-                    log_file.write(l + "\n")
-                if "received signal SIGTRAP" in l:
+                    log_file.write(l + b"\n")
+                if b"received signal SIGTRAP" in l:
                     space_count = 0
-                    self.p.stdin.write("c\n")
-                elif l.strip() == "":
+                    self.p.stdin.write(b"c\n")
+                elif l.strip() == b"":
                     space_count += 1
                     if space_count == 20:
                         break
-                elif "[trapfuzzer] save_bb_trace" in l:
+                elif b"[trapfuzzer] save_bb_trace" in l:
                     break
         except Exception as e:
             res = self.p.stdout.read()
-            if "[trapfuzzer] save_bb_trace" not in res:
+            if b"[trapfuzzer] save_bb_trace" not in res:
                 dst_file_path = "{}/tracer-exception-{}.bin".format(self.workspace, self.exception_case_count)
                 log_path = "{}/tracer-exception-{}.log".format(self.workspace, self.exception_case_count)
                 shutil.copyfile(self.current_input_file, dst_file_path)
 
-                with open(log_path, "w") as fp:
+                with open(log_path, "wb") as fp:
                     fp.write(output + res)
 
                 self.exception_case_count += 1
