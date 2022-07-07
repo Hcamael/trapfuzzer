@@ -572,7 +572,7 @@ class Fuzzer:
     def save_case_to_file(self, type, idx, trace, extrainfo=""):
         shutil.copyfile(self.input_path_read_by_target,
                         "{}/trapfuzz-{}-{}.bin".format(self.output, type, idx))
-        with open("{}/trapfuzz-{}-{}.trace".format(self.output, type, idx), "wb") as fp:
+        with open("{}/trapfuzz-{}-{}.trace".format(self.output, type, idx), "w") as fp:
             if extrainfo:
                 fp.write('\n[extra infomation]\n')
                 fp.write(extrainfo)
