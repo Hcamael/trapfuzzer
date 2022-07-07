@@ -90,8 +90,8 @@ class GdbTracer:
 
             try:
                 data = self.client_sock.recv(2)
-                if data == "ok":
-                    self.client_sock.sendall("next")
+                if data == b"ok":
+                    self.client_sock.sendall(b"next")
 
                 while True:
                     mod_idx = self.client_sock.recv(1)
