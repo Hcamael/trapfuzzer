@@ -167,7 +167,7 @@ def read_memory(addr, length=0x10):
 def stop_handler(event):
     global BB_LIST, PROCESS_MAPS, COV_MODULE_INFO, EXIT_BB_LIST, Log
 
-    print event
+    print(event)
 
     if isinstance(event, gdb.SignalEvent):
         if event.stop_signal in ["SIGABRT", "SIGSEGV"]:

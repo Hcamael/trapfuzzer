@@ -231,16 +231,16 @@ class CdbReaderThread(threading.Thread):
             self.queue.put(InternalErrorEvent(line))
 
     def run(self):
-        # print 'ReaderThread.run()'
+        # print('ReaderThread.run()')
         curline = bytes()
         # read from the pipe
         while not self.stop_reading:
             ch = self.pipe.stdout.read(1)
-            # print 'ReaderThread.run(): read %s' % ch
+            # print('ReaderThread.run(): read %s' % ch)
             if not ch:
                 # add a closed event to the queue
                 self.queue.put(PipeClosedEvent())
-                # print 'ReaderThread.run(): read nothing'
+                # print('ReaderThread.run(): read nothing')
                 break
             if PYTHON3:
                 self.queue.put(OutputEvent(ch.decode("ISO-8859-1")))
@@ -273,7 +273,7 @@ class Registers(object):
         if not m:
             raise AttributeError('Bad register %s (unable to parse value)' % name)
         val = int(m.group(2), 16)
-        # print "Registers.get(%s) => %x" % (name, val)
+        # print("Registers.get(%s) => %x" % (name, val))
         return val
 
     def set(self, name, value):
@@ -297,14 +297,14 @@ class Registers(object):
 
     def __getattr__(self, item):
         """only called if there *isn't* an attribute with this name"""
-        if not self.__dict__.has_key(item):
+        if item not in self.__dict__:
             return self.get(item)
         raise AttributeError(item)
 
     def __setattr__(self, item, value):
-        if not self.__dict__.has_key('_initialized'):
+        if "_initialized" not in self.__dict__:
             return dict.__setattr__(self, item, value)
-        elif self.__dict__.has_key(item):
+        elif item in self.__dict__:
             return dict.__setattr__(self, item, value)
         else:
             return self.set(item, value)
@@ -495,7 +495,7 @@ class PyCdb(object):
                     raise PyCdbTimeoutException()
                 break
 
-            # print "read_to_prompt: %s" % event
+            # print("read_to_prompt: %s" % event)
             if isinstance(event, OutputEvent):
                 self.is_debuggable = True
                 ch = event.output
@@ -630,7 +630,7 @@ class PyCdb(object):
         output = self.execute("? " + expression)
         # take the last line of output as there can be annoying warnings interspersed
         # like: WARNING: Unable to verify checksum...
-        # print "evaluate(" + expression + "): " + output
+        # print("evaluate(" + expression + "): " + output)
         lastline = output.splitlines()[-1]
         m = re.match(r'Evaluate expression: (\-?[0-9]+) = ([0-9A-Fa-f`]+)', lastline)
         if m:
@@ -953,7 +953,7 @@ class PyCdb(object):
             return None
         bpnum = int(m.group(1))
         bp = BreakpointEvent(bpnum)
-        # print "_breakpoint_info: %s" % bp
+        # print("_breakpoint_info: %s" % bp)
         return bp
 
     @staticmethod

@@ -116,7 +116,7 @@ def reproduce(args, cases, input_file, output_dir):
 
     process_name = os.path.basename(args[0])
 
-    print "target process name: {}".format(process_name)
+    print("target process name: {}".format(process_name))
 
 
     # enable page heap
@@ -137,7 +137,7 @@ def reproduce(args, cases, input_file, output_dir):
                         h = re.findall("crash-hash: (.*)", fp.read())[0]
                         hash_list.append(h)
                     except:
-                        print fpath
+                        print(fpath)
                         pass
 
     count = 0
@@ -167,7 +167,7 @@ def reproduce(args, cases, input_file, output_dir):
         except:
             pass
 
-        if not result.has_key('hash'):
+        if "hash" not in result:
             continue
 
         h = result['hash']
@@ -192,7 +192,7 @@ if __name__ == "__main__":
         if "-crash-" in i and ".bin" in i:
             files.append(os.path.join(dir, i))
         
-    # print len(files)
+    # (len(files))
     # exit(0)
     reproduce(args, files, "C:\\input.doc", "crash-trige2\\")
 

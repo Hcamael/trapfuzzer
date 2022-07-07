@@ -7,7 +7,7 @@ class PopUpKiller:
     def __init__(self):
         None
     def POPUpKillerThread(self):
-        print '[+] '+ datetime.now().strftime("%Y:%m:%d::%H:%M:%S") +' POP Up killer Thread started..'
+        print('[+] '+ datetime.now().strftime("%Y:%m:%d::%H:%M:%S") +' POP Up killer Thread started..')
         while True:
             time.sleep(0.1)
             try:
@@ -68,22 +68,22 @@ class PopUpKiller:
                     
                 #PPT
 
-                # print autoit.win_get_text('Microsoft PowerPoint')
+                # print(autoit.win_get_text('Microsoft PowerPoint'))
 
                 ppt_text = autoit.win_get_text('Microsoft PowerPoint')
 
                 if u"出现严重错误" in ppt_text:
-                    # print "kkkk"
+                    # print("kkkk")
                     autoit.control_click("[Class:#32770]", "Button1")
 
                 if u"无法编辑此" in ppt_text:
-                    # print "kkkk"
+                    # print("kkkk")
                     autoit.control_click("[Class:#32770]", "Button1")
                 if ppt_text != "":
-                    print ppt_text
+                    print(ppt_text)
 
                 if u"密码" in ppt_text:
-                    # print "kkkk"
+                    # print("kkkk")
                     autoit.control_click("[Class:#32770]", "Button1")
 
                 if u"示文稿中的一些控件无法激活" in ppt_text:
@@ -132,7 +132,7 @@ class PopUpKiller:
             except KeyboardInterrupt:
                 return
             except Exception as e:
-                # print e
+                # print(e)
                 pass
 
 if __name__ == "__main__":

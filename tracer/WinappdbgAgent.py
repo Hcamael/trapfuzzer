@@ -65,7 +65,7 @@ class WinappdbgAgent:
         cmd = struct.unpack("<I", self.tracer_sock.recv(4))[0]
 
         if cmd != GET_AGENT_PID:
-            print "connect_server failed, cmd: 0x{:x}".format(cmd)
+            print("connect_server failed, cmd: 0x{:x}".format(cmd))
             exit(1)
 
         self.tracer_sock.sendall(struct.pack("<I", os.getpid()))
@@ -98,11 +98,11 @@ class WinappdbgAgent:
                 return
 
             usage = self.get_cpu_usage_by_pid_no(pid)
-            # print usage
+            # print(usage)
             if usage == 0:
                 count += 1
         
-        print "kill process by cpu moitor"
+        print("kill process by cpu moitor")
         self.kill_process()
 
     def proc_cpu_monitor_func(self):
@@ -117,7 +117,7 @@ class WinappdbgAgent:
             except psutil.NoSuchProcess:
                 pass
             except Exception as e:
-                print e
+                print(e)
                 
                 
 
@@ -232,7 +232,7 @@ class WinappdbgAgent:
             except KeyboardInterrupt:
                 self.kill_process()
                 exit(0)
-            except WindowsError, e:
+            except WindowsError as e:
                 if e.winerror in (win32.ERROR_SEM_TIMEOUT, win32.WAIT_TIMEOUT):
                     # self.handle_window_popup()
                     continue
@@ -243,28 +243,28 @@ class WinappdbgAgent:
                 full_path = module.get_filename()
                 mod_name = os.path.basename(full_path).lower()
 
-                if self.basic_block_info.has_key(mod_name):
+                if mod_name in self.basic_block_info:
                     info = self.basic_block_info[mod_name]
                     if info['image_base'] == 0:
                         info['image_base'] = module.get_base()
                         info['image_end'] = module.get_base() + \
                                             info['rva_size']
                         info['full_path'] = full_path
-                        # print "[LOAD_DLL_DEBUG_EVENT] mod name:{}, full path:{}, base:0x{:X}".format(
-                        #     mod_name, full_path, info['image_base'])
+                        # print("[LOAD_DLL_DEBUG_EVENT] mod name:{}, full path:{}, base:0x{:X}".format(
+                        #     mod_name, full_path, info['image_base']))
 
             elif event.get_event_code() == win32.CREATE_PROCESS_DEBUG_EVENT:
                 full_path = event.get_filename()
                 mod_name = os.path.basename(full_path).lower()
-                if self.basic_block_info.has_key(mod_name):
+                if mod_name in self.basic_block_info:
                     info = self.basic_block_info[mod_name]
                     if info['image_base'] == 0:
                         info['image_base'] = event.raw.u.CreateProcessInfo.lpBaseOfImage
                         info['image_end'] = event.raw.u.CreateProcessInfo.lpBaseOfImage + \
                                             info['rva_size']
                         info['full_path'] = full_path
-                        # print "[CREATE_PROCESS_DEBUG_EVENT] mod name:{}, full path:{}, base:0x{:X}".format(
-                        #     mod_name, full_path, info['image_base'])
+                        # print("[CREATE_PROCESS_DEBUG_EVENT] mod name:{}, full path:{}, base:0x{:X}".format(
+                        #     mod_name, full_path, info['image_base']))
 
             elif event.get_event_code() == win32.EXCEPTION_DEBUG_EVENT and event.get_exception_code() == win32.STATUS_BREAKPOINT:
                 exit_process = False
@@ -276,7 +276,7 @@ class WinappdbgAgent:
                         rva = pc - info['image_base']
 
                         if rva in exit_basci_block:
-                            print "exec: {}!0x{:X}, exit!".format(k, rva)
+                            print("exec: {}!0x{:X}, exit!".format(k, rva))
                             exit_process = True
                             break
 
@@ -286,7 +286,7 @@ class WinappdbgAgent:
                         endTime = time.time() + timeout
                         info['bb-list'].append(rva)
 
-                        # print "exec: {}!0x{:X}".format(k, rva)
+                        # print("exec: {}!0x{:X}".format(k, rva))
 
                 if exit_process:
                     self.kill_process(kill_twice=False)
@@ -307,7 +307,7 @@ class WinappdbgAgent:
                 try:
                     from capstone import *
                     code = event.get_process().read(crash.pc, 0x10)
-                    # print code.encode("hex")
+                    # print(code.encode("hex"))
                     md = Cs(CS_ARCH_X86, CS_MODE_32)
                     for i in md.disasm(code, crash.pc):
                         dis = "0x{:x}:\t{}\t{}".format(
@@ -341,7 +341,7 @@ class WinappdbgAgent:
             if len(info['bb-list']) < c:
                 c = len(info['bb-list'])
             for i in range(c):
-                print "{}".format(info['bb-list'][-(c - i)])
+                print("{}".format(info['bb-list'][-(c - i)]))
 
         timer.cancel()
 
@@ -368,7 +368,7 @@ class WinappdbgAgent:
                                 info['full_path'], info['bb-list'], info)
                             break
                         except Exception as e:
-                            print e
+                            print(e)
                             self.kill_process()
                             count += 1
                             time.sleep(1)
@@ -405,7 +405,7 @@ class WinappdbgAgent:
                     data += struct.pack("<I", len(ret_data))
                     data += ret_data
 
-                    # print ret_data
+                    # print(ret_data)
 
                     self.tracer_sock.sendall(data)
                 else:
@@ -414,12 +414,12 @@ class WinappdbgAgent:
                     self.tracer_sock.sendall(data)
 
             else:
-                print "invaild cmd: 0x{:x}".format(cmd)
+                print("invaild cmd: 0x{:x}".format(cmd))
 
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print "WinappdbgCSTracer.py config.json"
+        print("WinappdbgCSTracer.py config.json")
         exit(1)
 
     config = {}

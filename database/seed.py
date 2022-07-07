@@ -82,7 +82,7 @@ class SeedDB:
             repr(extra_info).strip('u')
         )
 
-        # print sql
+        # print(sql)
 
         try:
             self.db.begin()
@@ -91,7 +91,7 @@ class SeedDB:
             self.db.commit()
             return True
         except Exception as e:
-            print e
+            print(e)
             self.db.rollback()
             raise Exception("insert_new_seed failed")
             return False
@@ -110,7 +110,7 @@ class SeedDB:
         elif isinstance(i, str):
             ret = self.get_row_by_hash(i)
         else:
-            print "get_row param invaild!"
+            print("get_row param invaild!")
             return None
 
         return ret
@@ -164,7 +164,7 @@ class SeedDB:
         elif isinstance(i, str):
             self.inc_column_by_hash(column_name, i)
         else:
-            print "inc_column param invaild!"
+            print("inc_column param invaild!")
 
     def inc_column_by_id(self, column_name, seed_id):
         while True:

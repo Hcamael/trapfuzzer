@@ -256,7 +256,7 @@ class OpenXMLMutator:
             zip_ref.extractall(directory_to_extract_to)
             zip_ref.close()
         except Exception as e:
-            print e
+            print(e)
 
     def pack(self, output):
         zf = zipfile.ZipFile(output, 'w', zipfile.ZIP_DEFLATED)
@@ -290,7 +290,7 @@ class OpenXMLMutator:
 
         self.current_mutate_file = k
 
-        # print "mutate: {}".format(k)
+        # print("mutate: {}".format(k))
 
 
 if __name__ == "__main__":
@@ -324,16 +324,16 @@ if __name__ == "__main__":
     for i in range(100000):
         input = bytearray("<sss>dddd<sss>  <ax:sss>dddd<ax:sss> <cs:www>fdd<cs:www>")
 
-        print len(input)
-        print repr(input)
+        print(len(input))
+        print(repr(input))
 
         for i in range(4):
             input = x.mutate(input)
 
-        print len(input)
-        print repr(input)
+        print(len(input))
+        print(repr(input))
 
         with open("o.bin", "wb") as fp:
             fp.write(input)
 
-    print "okkk"
+    print("okkk")

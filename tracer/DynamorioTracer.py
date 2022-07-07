@@ -48,7 +48,7 @@ class DynamorioTracer:
 
     def timeout_handler(self):
         try:
-            print "timeout"
+            print("timeout")
             self.is_timeout = True
             self.process.kill()
         except Exception as e:
@@ -60,7 +60,7 @@ class DynamorioTracer:
     def trace(self, need_patch_to_file=False, verbose=False, exit_basci_block=[], timeout=2.0):
         self.is_timeout = False
 
-        # print " ".join(self.command_list)
+        # print(" ".join(self.command_list))
         process_stdout = open("stdout.txt", "w")
         self.process = subprocess.Popen(" ".join(self.command_list), shell=True, cwd=self.workspace, stdin=subprocess.PIPE,
                                         stdout=process_stdout.fileno(), stderr=subprocess.STDOUT)
@@ -101,7 +101,7 @@ class DynamorioTracer:
                     break
 
                 mod_name = self.cov_module_name_list[mod_id]
-                if not cov_trace_info.has_key(mod_name):
+                if mod_name not in cov_trace_info:
                     cov_trace_info[mod_name] = []
 
                 cov_trace_info[mod_name].append(rva)
@@ -119,4 +119,4 @@ class DynamorioTracer:
 if __name__ == "__main__":
     tracer = DynamorioTracer(["/home/hac425/code/example/test", "/home/hac425/code/in/1"],
                              "/home/hac425/DynamoRIO-Linux-7.91.18355/bin64/drrun", "/home/hac425/code/tracer/dy_bin_cov/build/libbincov.so", "/home/hac425/code/output/", ["test"])
-    print tracer.trace()
+    print(tracer.trace())

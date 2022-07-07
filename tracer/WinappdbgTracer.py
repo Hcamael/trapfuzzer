@@ -149,7 +149,7 @@ class WinappdbgTracer:
                 break
             try:
                 event = self.debugger.wait(1000)
-            except WindowsError, e:
+            except WindowsError as e:
                 if e.winerror in (win32.ERROR_SEM_TIMEOUT, win32.WAIT_TIMEOUT):
                     self.handle_window_popup()
                     continue
@@ -160,27 +160,27 @@ class WinappdbgTracer:
                 full_path = module.get_filename()
                 mod_name = os.path.basename(full_path).lower()
 
-                if self.basic_block_info.has_key(mod_name):
+                if mod_name in self.basic_block_info:
                     info = self.basic_block_info[mod_name]
                     if info['image_base'] == 0:
                         info['image_base'] = module.get_base()
                         info['image_end'] = module.get_base() + \
                             info['rva_size']
                         info['full_path'] = full_path
-                        # print "[LOAD_DLL_DEBUG_EVENT] mod name:{}, full path:{}, base:0x{:X}".format(
+                        # print("[LOAD_DLL_DEBUG_EVENT] mod name:{}, full path:{}, base:0x{:X}".format()
                         #     mod_name, full_path, info['image_base'])
 
             elif event.get_event_code() == win32.CREATE_PROCESS_DEBUG_EVENT:
                 full_path = event.get_filename()
                 mod_name = os.path.basename(full_path).lower()
-                if self.basic_block_info.has_key(mod_name):
+                if mod_name in self.basic_block_info:
                     info = self.basic_block_info[mod_name]
                     if info['image_base'] == 0:
                         info['image_base'] = event.raw.u.CreateProcessInfo.lpBaseOfImage
                         info['image_end'] = event.raw.u.CreateProcessInfo.lpBaseOfImage + \
                             info['rva_size']
                         info['full_path'] = full_path
-                        # print "[CREATE_PROCESS_DEBUG_EVENT] mod name:{}, full path:{}, base:0x{:X}".format(
+                        # print("[CREATE_PROCESS_DEBUG_EVENT] mod name:{}, full path:{}, base:0x{:X}".format()
                         #     mod_name, full_path, info['image_base'])
 
             elif event.get_event_code() == win32.EXCEPTION_DEBUG_EVENT and event.get_exception_code() == win32.STATUS_BREAKPOINT:
@@ -193,7 +193,7 @@ class WinappdbgTracer:
                         rva = pc - info['image_base']
 
                         if rva in exit_basci_block:
-                            # print "exec: {}!0x{:X}, exit!".format(k, rva)
+                            # print("exec: {}!0x{:X}, exit!".format(k, rva))
                             exit_process = True
                             break
 
@@ -203,7 +203,7 @@ class WinappdbgTracer:
                         endTime = time.time() + timeout
                         info['bb-list'].append(rva)
 
-                        print "exec: {}!0x{:X}".format(k, rva)
+                        print("exec: {}!0x{:X}".format(k, rva))
 
                 if exit_process:
                     break
@@ -213,15 +213,15 @@ class WinappdbgTracer:
                 full_rep = crash.fullReport()
                 (exploitable, type, info) = crash.isExploitable()
 
-                # print dir(event.get_thread())
+                # print(dir(event.get_thread()))
 
                 dis = ""
-                # print help(event.get_process().read)
+                # print(help(event.get_process().read))
                 code = ""
                 try:
                     from capstone import *
                     code = event.get_process().read(crash.pc, 0x10)
-                    # print code.encode("hex")
+                    # print(code.encode("hex"))
                     md = Cs(CS_ARCH_X86, CS_MODE_32)
                     for i in md.disasm(code, crash.pc):
                         dis = "0x{:x}:\t{}\t{}".format(
@@ -229,12 +229,12 @@ class WinappdbgTracer:
                         break
 
                 except Exception as e:
-                    # print e
+                    # print(e)
                     dis = "Could not disassemble"
 
-                # print "found crash"
-                # print full_rep
-                # print dis
+                # print("found crash")
+                # print(full_rep)
+                # print(dis)
 
                 exec_status = ExecStatus.CRASH
                 crash_info += full_rep
@@ -264,7 +264,7 @@ class WinappdbgTracer:
         # if exec_status == ExecStatus.CRASH:
         #     # try again...
         #     exec_status, crash_info = self.exec_testcase(exit_basci_block, timeout)
-        #     print crash_info
+        #     print(crash_info)
 
         trace_info = []
         for k in self.basic_block_info.keys():
@@ -343,15 +343,15 @@ class WinappdbgRpcTracer:
 
             mod_name = os.path.basename(module.szExePath).lower()
 
-            if self.basic_block_info.has_key(mod_name):
+            if mod_name in self.basic_block_info:
                 self.basic_block_info[mod_name]['image_base'] = module.modBaseAddr
                 self.basic_block_info[mod_name]['image_end'] = module.modBaseAddr + \
                     self.basic_block_info[mod_name]['rva_size']
 
                 # Print the module address, size and pathname.
-                print fmt % (module.modBaseAddr,
+                print(fmt % (module.modBaseAddr,
                              module.modBaseSize,
-                             module.szExePath)
+                             module.szExePath))
 
             # Next module in the process.
             module = Module32Next(hSnapshot)
@@ -402,7 +402,7 @@ class WinappdbgRpcTracer:
                     proc.write(
                         bb_info['image_base'] + rva, '\xcc')
 
-        print "set breakpoint to process!"
+        print("set breakpoint to process!")
 
         self.is_set_breakpointed = True
 
@@ -438,9 +438,9 @@ class WinappdbgRpcTracer:
         for i in exit_basci_block:
             for mod_name in self.basic_block_info.keys():
                 bb_info = self.basic_block_info[mod_name]
-                if bb_info.has_key(i):
+                if i in bb_info:
                     self.debugee_proc.write(bb_info['image_base'] + i, '\xcc')
-                    print "set breakpoint on 0x{:X} for exit bb!".format(i)
+                    print("set breakpoint on 0x{:X} for exit bb!".format(i))
 
         crash_info = ""
         exec_status = ExecStatus.NORMAL
@@ -454,7 +454,7 @@ class WinappdbgRpcTracer:
                 break
             try:
                 event = self.debugger.wait(1000)
-            except WindowsError, e:
+            except WindowsError as e:
                 if e.winerror in (win32.ERROR_SEM_TIMEOUT, win32.WAIT_TIMEOUT):
                     continue
                 raise
@@ -472,7 +472,7 @@ class WinappdbgRpcTracer:
                         event.get_thread().set_pc(pc)
                         endTime = time.time() + timeout
                         info['bb-list'].append(rva)
-                        print "exec: {}!0x{:X}".format(k, rva)
+                        print("exec: {}!0x{:X}".format(k, rva))
 
                         if rva in exit_basci_block:
                             exit_process = True
@@ -491,9 +491,9 @@ class WinappdbgRpcTracer:
                 except:
                     dis = "Could not disassemble"
 
-                print "found crash"
-                print full_rep
-                print dis
+                print("found crash")
+                print(full_rep)
+                print(dis)
 
                 exec_status = ExecStatus.CRASH
                 crash_info += full_rep
@@ -509,7 +509,7 @@ class WinappdbgRpcTracer:
             finally:
                 self.debugger.cont()
 
-        # print dir(self.debugger)
+        # print(dir(self.debugger))
 
         trace_info = []
         for k in self.basic_block_info.keys():

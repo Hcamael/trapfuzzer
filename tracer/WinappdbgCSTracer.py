@@ -67,19 +67,19 @@ class WinappdbgCSTracer:
         config_file_path = os.path.join(self.workspace, "config.json")
 
         command = "{} {} {}".format(python_path, agent_script_path, config_file_path)
-        # print command
+        # print(command)
         self.agent_process = subprocess.Popen(command, shell=True)
 
         try:
             self.client_sock, _ = self.server_sock.accept()
         except Exception as e:
-            print e
+            print(e)
             exit(1)
 
         cmd = struct.unpack("<I", self.client_sock.recv(4))[0]
 
         if cmd != AGENT_HELLO_CMD:
-            print "recv invaild cmd: 0x{:x}".format(cmd)
+            print("recv invaild cmd: 0x{:x}".format(cmd))
             exit(1)
 
         self.client_sock.sendall(struct.pack("<I", GET_AGENT_PID))
@@ -168,18 +168,18 @@ class WinappdbgCSTracer:
             data_len = struct.unpack("<I", self.client_sock.recv(4))[0]
             data = self.client_sock.recv(data_len)
 
-            # print data
+            # print(data)
             ret = ExecResult()
             try:
                 ret.load_json(data)
             except Exception as e:
-                print e
-                print "data length: {}, recv length: {}".format(data_len, len(data))
-                print data
+                print(e)
+                print(f"data length: {data_len}, recv length: {len(data)}")
+                print(data)
                 exit(1)
             return ret
 
-        print "unknown ret_code 0x{:x}".format(ret_code)
+        print("unknown ret_code 0x{:x}".format(ret_code))
 
     def trace(self, need_patch_to_file=False, verbose=False, exit_basci_block=[], timeout=2.0):
         ret = None

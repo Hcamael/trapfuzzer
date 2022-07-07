@@ -38,11 +38,11 @@ class WindbgExtTracer:
 
         command = "C:\\windbg-sdk-samples\\Debug\\healer.exe"
 
-        if config.has_key("tracer-binary"):
+        if "tracer-binary" in config:
             command = config['tracer-binary']
 
         if not os.path.exists(command):
-            print "{} not exists!".format(command)
+            print(f"{command} not exists!")
             exit(1)
 
         self.client_sock = None
@@ -71,7 +71,7 @@ class WindbgExtTracer:
         self.client_sock, _ = self.server_sock.accept()
 
     def timeout_handler(self):
-        print "timeout_handler"
+        print("timeout_handler")
         try:
             self.is_timeout = True
 
@@ -165,4 +165,4 @@ if __name__ == "__main__":
     tracer = WindbgExtTracer(["C:\\Program Files (x86)\\Foxit Software\\Foxit Reader\\FoxitReader.exe"],
                              ["C:\\Program Files (x86)\\Foxit Software\\Foxit Reader\\FoxitReader.exe-bb.txt"],
                              "C:\\output\\", ["FoxitReader.exe"])
-    print tracer.trace()
+    print(tracer.trace())

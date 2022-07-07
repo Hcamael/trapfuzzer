@@ -64,12 +64,12 @@ class Fuzzer:
             self.config = json.loads(fp.read())
         self.output = os.path.abspath(self.config['output'])
 
-        if not self.config.has_key("resume_execution"):
+        if "resume_execution" not in self.config:
             self.resume_fuzzing = False
         else:
             self.resume_fuzzing = self.config['resume_execution']
 
-        if not self.config.has_key("patch_to_binary"):
+        if "patch_to_binary" not in self.config:
             self.patch_to_binary = False
         else:
             self.patch_to_binary = self.config['patch_to_binary']
@@ -83,7 +83,7 @@ class Fuzzer:
         # import ipdb
         # ipdb.set_trace()
 
-        if self.config.has_key("db_host"):
+        if "db_host" in self.config:
             self.enable_database = True
         else:
             self.enable_database = False
@@ -97,7 +97,7 @@ class Fuzzer:
             db_table = self.config['db_table']
             self.db = SeedDB(db_host, db_user, db_passwd, db_database, db_table)
 
-            if not self.config.has_key("file_type"):
+            if "file_type" not in self.config:
                 self.file_type = os.path.basename(self.input_path_read_by_target)
 
                 if len(self.file_type.split('.')) > 2:
@@ -126,13 +126,13 @@ class Fuzzer:
         self.min_testcase_size = 0
         self.exec_timeout = 50
 
-        if self.config.has_key('min_testcase_size'):
+        if "min_testcase_size" in self.config:
             self.min_testcase_size = self.config['min_testcase_size']
 
-        if self.config.has_key('exec_timeout'):
+        if "exec_timeout" in self.config:
             self.exec_timeout = self.config['exec_timeout']
 
-        if self.config.has_key('timeout_ratio'):
+        if "timeout_ratio" in self.config:
             self.timeout_ratio = self.config['timeout_ratio']
 
         self.mutator_list = []
@@ -242,10 +242,10 @@ class Fuzzer:
         help_info = "\n".join(cmd_help) + "\n"
         while True:
             cmd = sock.recv(100).strip()
-            cmd_list = cmd.split(" ")
+            cmd_list = cmd.split(b" ")
             data = ""
             try:
-                if cmd_list[0] in ["s", "status"]:
+                if cmd_list[0] in [b"s", b"status"]:
                     data = "\nstatus\n"
                     data += "stage: {}\n".format(self.exec_stage)
                     data += "total dos:      {}\n".format(len(self.dos_list))
@@ -427,7 +427,7 @@ class Fuzzer:
                         break
 
             for ti in trace_info:
-                if not self.total_module_trace_info.has_key(ti.module_name):
+                if ti.module_name not in self.total_module_trace_info:
                     if self.patch_to_binary:
                         self.total_module_trace_info[ti.module_name] = set()
                     else:
@@ -536,7 +536,7 @@ class Fuzzer:
     def has_new_path(self, trace):
         has_new_path = False
         for ti in trace:
-            if not self.total_module_trace_info.has_key(ti.module_name):
+            if ti.module_name not in self.total_module_trace_info:
 
                 if self.patch_to_binary:
                     if len(ti.bb_list) > 0:
@@ -758,7 +758,7 @@ class Fuzzer:
                 self.logger.log("stop from load_testcase\n")
                 exit(0)
 
-            if self.loaded_testcase_list.has_key(os.path.basename(full_path)):
+            if os.path.basename(full_path) in self.loaded_testcase_list:
                 continue
 
             c = 0
@@ -770,7 +770,7 @@ class Fuzzer:
                     c += 1
                     time.sleep(1)
 
-                    print e
+                    print(e)
 
             if c >= 3:
                 print("shutil.copyfile({}, {}) failed !".format(full_path, self.input_path_read_by_target))
@@ -885,7 +885,7 @@ class Fuzzer:
 
     def fuzz(self):
 
-        if not self.resume_fuzzing and self.config.has_key("testcase"):
+        if not self.resume_fuzzing and "testcase" in self.config:
             if os.path.exists(self.config['testcase']):
                 self.load_testcase(self.config['testcase'])
             else:
@@ -928,7 +928,7 @@ class Fuzzer:
                             m_info = self.cur_mutator.mutate(seed_path, self.input_path_read_by_target)
                             break
                         except:
-                            # print "mutate file error, wait for retry..."
+                            # print("mutate file error, wait for retry...")
                             pass
                         time.sleep(0.5)
 
@@ -937,7 +937,7 @@ class Fuzzer:
                     try:
                         ret = self.exec_testcase(self.patch_to_binary)
                     except Exception as e:
-                        print e
+                        print(e)
                         self.stop_fuzz()
                         return
 

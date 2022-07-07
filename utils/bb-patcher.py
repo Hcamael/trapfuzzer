@@ -20,17 +20,17 @@ class AnalyseThread(threading.Thread):
         self.script_path = script_path
 
     def ida_analyse(self, ida_path, script_path, input_path):
-        # print input_path
+        # print(input_path)
         command = '"{}" -A -c -S{} {}'.format(ida_path, os.path.abspath(script_path), input_path)
-        print command
+        print(command)
         p = subprocess.Popen(command, shell=True, cwd=os.getcwd())
         p.wait()
 
         if p.stdout:
-            print p.stdout.read()
+            print(p.stdout.read())
 
         if p.stderr:
-            print p.stderr.read()
+            print(p.stderr.read())
 
     def run(self):
         while True:
@@ -40,7 +40,7 @@ class AnalyseThread(threading.Thread):
             except Empty:
                 break
             except Exception as e:
-                print e
+                print(e)
                 break
 
 
@@ -77,7 +77,7 @@ def patch_bb(target, bb_file):
     f.close()
     fa.close()
 
-    print "patch {} basic block of {}".format(count, fname)
+    ("patch {} basic block of {}".format(count, fname))
 
 
 if __name__ == "__main__":

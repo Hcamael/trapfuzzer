@@ -162,9 +162,9 @@ class Crash:
             if len(d) > 0:
                 return d[0][-3:]
         except Exception as e:
-            print "get_crash_hash_from_crash_info failed"
-            print e
-            print crash_info
+            print("get_crash_hash_from_crash_info failed")
+            print(e)
+            print(crash_info)
         return pc
 
 

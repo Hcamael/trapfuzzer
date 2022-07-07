@@ -99,7 +99,7 @@ class GdbTracer:
 
                     mod_name = module_info_list[mod_idx][0]  # get module name
 
-                    # print "module name:{}".format(mod_name) 
+                    # print("module name:{}".format(mod_name))
 
                     info = self.basic_block_info[mod_name]
 
@@ -111,7 +111,7 @@ class GdbTracer:
                     self.client_sock.sendall(raw_byte)
 
             except Exception as e:
-                print e
+                print(e)
                 self.logger.log("gdb.trace: {}".format(e))
             finally:
                 self.client_sock.close()
@@ -233,11 +233,11 @@ class GdbTracer:
     def get_crash_hash(self, data):
         crash_hash = ""
         for l in data.split("\n"):
-            # print l
+            # print(l)
             addr = re.findall("#\d+\s+(.*?)\s+in", l)
             if len(addr) >= 1:
                 crash_hash += addr[0][-3:]
-                # print crash_hash
+                # print(crash_hash)
 
         return crash_hash
 
@@ -309,11 +309,11 @@ class GdbRunTracer:
             config = json.loads(fp.read())
 
         trapfuzzer_gdb_path = ""
-        if config.has_key("tracer-binary"):
+        if "tracer-binary" in config:
             trapfuzzer_gdb_path = config['tracer-binary']
 
         if not os.path.exists(trapfuzzer_gdb_path):
-            print "trapfuzzer gdb path ({}) don't exit!".format(trapfuzzer_gdb_path)
+            print(f"trapfuzzer gdb path ({trapfuzzer_gdb_path}) don't exit!")
             exit(0)
 
         command = "{} -q -x {}/cmd.gdb  --args {}".format(trapfuzzer_gdb_path, self.workspace, self.cmdline)
@@ -376,11 +376,11 @@ class GdbRunTracer:
     def get_crash_hash(self, data):
         crash_hash = ""
         for l in data.split("\n"):
-            # print l
+            # print(l)
             addr = re.findall("#\d+\s+(.*?)\s+in", l)
             if len(addr) >= 1:
                 crash_hash += addr[0][-3:]
-                # print crash_hash
+                # print(crash_hash)
 
         return crash_hash
 
@@ -396,7 +396,7 @@ class GdbRunTracer:
 
             # while True:
             #     l = self.process.stdout.readline()
-            #     print l,
+            #     print(l)
 
             data = struct.unpack("<I", self.client_sock.recv(4))[0]
             # print("recv: 0x{:X}".format(data))
@@ -442,8 +442,8 @@ class GdbRunTracer:
 if __name__ == "__main__":
     # tracer = GdbTracer(["/home/hac425/code/example/test", "/home/hac425/code/in/1"],
     #                       ["/home/hac425/code/example/test-bb.txt"], "/home/hac425/code/output/", ["test"])
-    # print tracer.trace()
+    # print(tracer.trace())
 
     tracer = GdbRunTracer(["/home/hac425/code/example/test", "/home/hac425/code/in/1"],
                           ["/home/hac425/code/example/test-bb.txt"], "/home/hac425/code/output/", ["test"])
-    print tracer.trace()
+    print(tracer.trace())
