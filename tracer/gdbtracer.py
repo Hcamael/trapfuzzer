@@ -185,7 +185,7 @@ class GdbTracer:
 
         output = b""
         if self.debug:
-            log_file = open("debug.log", "w")
+            log_file = open("debug.log", "wb")
 
         timer = Timer(timeout, self.timeout_handler)
         try:
