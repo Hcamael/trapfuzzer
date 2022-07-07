@@ -351,7 +351,7 @@ class Fuzzer:
                             self.import_case_dir = cmd_list[1]
 
                 elif cmd_list[0] in ["q", "quit"]:
-                    sock.sendall("quit\n")
+                    sock.sendall(b"quit\n")
                     break
                 else:
                     data = "Invaild cmd: {}\n".format(cmd)
@@ -361,7 +361,7 @@ class Fuzzer:
                 data = "command error: {}, data:{}\n".format(e, cmd)
 
             data += "\n"
-            sock.sendall(data)
+            sock.sendall(data.encode())
 
     def manage_thead(self):
         self.server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
