@@ -1,7 +1,7 @@
 from threading import Timer
 import threading
 import subprocess
-from common import *
+from .common import *
 import os
 import errno
 import shutil
