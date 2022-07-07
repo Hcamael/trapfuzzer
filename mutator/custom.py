@@ -12,11 +12,11 @@ class MutatorBase:
         quotes = False
         f.seek(pos)
         for x in range(len):
-            c = f.read(1)
+            c = f.read(1).decode()
             if c == "<" or c == ">" or c == "\"":
                 return False
 
-        c = f.read(1)
+        c = f.read(1).decode()
         quotes = 0
         while c != "" and c != None:
             if c == "\"":
@@ -28,7 +28,7 @@ class MutatorBase:
                     return True
             if c == "<":
                 return True
-            c = f.read(1)
+            c = f.read(1).decode()
         return False
 
     def restore(self, src, dest, signature):
@@ -41,7 +41,7 @@ class MutatorBase:
             pos = int(sign[0:8], 16)
             val = int(sign[8:10], 16)
             f.seek(pos)
-            f.write(chr(val))
+            f.write(bytes([chr(val)]))
         f.close()
 
     def setConf(self, conf):
@@ -79,9 +79,9 @@ class FileByteValues(MutatorBase):
                 pos = self.myRand(self.skip, size-len(newVal))
                 for y in range(len(newVal)):
                     f.seek(pos+y)
-                    oldVal = f.read(1)
+                    oldVal = f.read(1).decode()
                     f.seek(pos+y)
-                    f.write(chr(newVal[y]))
+                    f.write(bytes([chr(newVal[y])]))
                     ret_signature.append("%08X%02X%02X" %
                                          (pos+y, ord(oldVal), newVal[y]))
 
@@ -129,13 +129,13 @@ class FileBitFlipping(MutatorBase):
             for x in range(int(count)):
                 pos = self.myRand(self.skip, size-1)
                 f.seek(pos)
-                c = f.read(1)
+                c = f.read(1).decode()
                 if c != None:
                     val = ord(c)
                     oldVal = val
                     f.seek(pos)
                     val = self.modify(val)
-                    f.write(chr(val))
+                    f.write(bytes([chr(val)]))
                     ret_signature.append("%08X%02X%02X" % (pos, oldVal, val))
                     ret_text += "Mutating byte at 0x%X (%d) from 0x%02X to 0x%02X\n" % (
                         pos, pos, oldVal, val)
