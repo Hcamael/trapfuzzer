@@ -162,7 +162,7 @@ class Fuzzer:
 
         self.sever_thead = threading.Thread(target=self.manage_thead)
         self.server_running = False
-        self.sever_thead.setDaemon(True)
+        self.sever_thead.daemon = True
         self.sever_thead.start()
 
         while not self.server_running:

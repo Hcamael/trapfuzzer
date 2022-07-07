@@ -212,7 +212,7 @@ class BreakpointInfo(object):
 class CdbReaderThread(threading.Thread):
     def __init__(self, pipe):
         super(CdbReaderThread, self).__init__()
-        self.setDaemon(True)
+        self.daemon = True
         self.queue = queue.Queue()
         self.pipe = pipe
         self.stop_reading = False
@@ -612,7 +612,7 @@ class PyCdb(object):
             self.interrupt()
 
         t = threading.Thread(target=do_break)
-        t.setDaemon(True)
+        # t.setDaemon(True)
         t.daemon = True
         t.start()
 
