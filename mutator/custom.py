@@ -11,7 +11,7 @@ class MutatorBase:
     def isInXmlValue(self, f, pos, len):
         quotes = False
         f.seek(pos)
-        for x in xrange(len):
+        for x in range(len):
             c = f.read(1)
             if c == "<" or c == ">" or c == "\"":
                 return False
@@ -73,11 +73,11 @@ class FileByteValues(MutatorBase):
                 count = self.max
 
             f = open(dest, "r+b")
-            for x in xrange(int(count)):
+            for x in range(int(count)):
                 newVal = self.byteValues[self.myRand(
                     0, len(self.byteValues)-1)]
                 pos = self.myRand(self.skip, size-len(newVal))
-                for y in xrange(len(newVal)):
+                for y in range(len(newVal)):
                     f.seek(pos+y)
                     oldVal = f.read(1)
                     f.seek(pos+y)
@@ -126,7 +126,7 @@ class FileBitFlipping(MutatorBase):
                 count = self.max
 
             f = open(dest, "r+b")
-            for x in xrange(int(count)):
+            for x in range(int(count)):
                 pos = self.myRand(self.skip, size-1)
                 f.seek(pos)
                 c = f.read(1)

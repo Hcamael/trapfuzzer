@@ -83,7 +83,7 @@ def u64(d):
 def hexdump(src, length=16):
     filter = ''.join([(len(repr(chr(x))) == 3) and chr(x) or '.' for x in range(256)])
     lines = []
-    for c in xrange(0, len(src), length):
+    for c in range(0, len(src), length):
         chars = src[c:c + length]
         hex = ' '.join(["%02x" % ord(x) for x in chars])
         printable = ''.join(["%s" % ((ord(x) <= 127 and filter[ord(x)]) or '.') for x in chars])
@@ -94,7 +94,7 @@ def hexdump(src, length=16):
 def get_random_string(len):
     """ 获取len长度的随机字符串"""
     res = ""
-    for i in xrange(len):
+    for i in range(len):
         res += random.choice(CHAR_LIST)
     return res
 
@@ -144,7 +144,7 @@ def generate_preseqs(trans, idx):
     :return:[{"send":"xxx", "recv":"kkkk"}]
     """
     seqs = []
-    for i in xrange(idx):
+    for i in range(idx):
         seq = {}
         seq['send'] = trans[i]['send']
         seq['recv'] = trans[i]['recv']
@@ -598,7 +598,7 @@ class Mutater:
         if self.fuzz_rate == 1 or len(data) < 20:
             # 选择变异次数
             count = random.randint(1, self.mutate_max_count)
-            for i in xrange(count):
+            for i in range(count):
                 # 随机选取一个变异函数
                 func = random.choice(MANGLE_FUNCS)
                 data = func(data)
@@ -619,7 +619,7 @@ class Mutater:
             data = data[off:off + fuzz_len]
 
             count = random.randint(1, self.mutate_max_count)
-            for i in xrange(count):
+            for i in range(count):
                 # 随机选取一个变异函数
                 func = random.choice(MANGLE_FUNCS)
                 data = func(data)

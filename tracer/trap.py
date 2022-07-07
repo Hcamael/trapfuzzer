@@ -150,7 +150,7 @@ def save_bb_trace(status):
     with open("gdb.status", "w") as fp:
         fp.write(status + "\n")
     
-    logging.debug("[trapfuzzer] save_bb_trace {}".format(status))
+    print(f"[trapfuzzer] save_bb_trace {status}")
 
 def save_crash_info():
     reg_info = gdb.execute("i r",to_string=True)

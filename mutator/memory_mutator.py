@@ -73,7 +73,7 @@ class ByteCopyMemMutator(MemMutatorBase):
 
             tmp = data[off_from: off_from + c]
 
-            for x in xrange(c):
+            for x in range(c):
                 data[off_to + x] = data[off_from + x]
                 self.mutate_info.append(off_to + x)
 
@@ -165,10 +165,10 @@ class ByteValueMemMutator(MemMutatorBase):
         if self.max > 0 and count > self.max:
             count = self.max
 
-        for x in xrange(count):
+        for x in range(count):
             newVal = self.byteValues[self.myRand(0, len(self.byteValues) - 1)]
             pos = self.myRand(self.skip, size - len(newVal))
-            for y in xrange(len(newVal)):
+            for y in range(len(newVal)):
                 data[pos + y] = newVal[y]
                 self.mutate_info.append(pos + y)
 
@@ -192,7 +192,7 @@ class BitFlippingMemMutator(MemMutatorBase):
         if self.max > 0 and count > self.max:
             count = self.max
 
-        for x in xrange(count):
+        for x in range(count):
             pos = self.myRand(self.skip, size - 1)
             d = data[pos]
             flip_d = self.flipping(d)
