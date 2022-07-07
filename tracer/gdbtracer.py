@@ -137,7 +137,7 @@ class GdbTracer:
             bb['rva_size'] = file_rva_size
 
             fname_sz = struct.unpack("<I", fp.read(4))[0]
-            fname = fp.read(fname_sz).strip("\x00")
+            fname = fp.read(fname_sz).strip(b"\x00")
 
             while True:
                 data = fp.read(12)
