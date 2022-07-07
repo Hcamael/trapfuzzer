@@ -165,7 +165,9 @@ def save_crash_info():
         fp.write(bt + "\n")
 
 def exit_handler(event):
-    save_and_data_exit("normal")
+    pid = get_pid()
+    if pid == target_pid:
+        save_and_data_exit("normal")
 
 def nop(event):
     pass
