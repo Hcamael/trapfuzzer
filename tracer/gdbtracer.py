@@ -55,7 +55,7 @@ class GdbTracer:
         else:
             self.logger = logger
 
-        self.debug = False
+        self.debug = True
 
     def communicate_server_func(self):
         port = random.randint(20000, 50000)

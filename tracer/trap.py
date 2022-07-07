@@ -8,7 +8,7 @@ import struct
 import os
 import logging
 
-DEBUG = False
+DEBUG = True
 
 config = None
 with open("config.json", "r") as fp:
