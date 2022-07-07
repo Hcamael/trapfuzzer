@@ -113,7 +113,7 @@ class GdbTracer:
                     # print("offset:0x{:08X}".format(offset))
 
                     raw_byte = info[offset]['origin_byte']
-                    self.client_sock.sendall(raw_byte)
+                    self.client_sock.sendall(raw_byte.encode())
 
             except Exception as e:
                 print(e)
