@@ -6,6 +6,7 @@ import socket
 import sys
 import struct
 import os
+import logging
 
 DEBUG = False
 
@@ -20,7 +21,7 @@ tracer_sock.send(b"ok")
 tracer_sock.recv(4)
 
 if DEBUG:
-    print("sever init")
+    logging.basicConfig(filename='gdb.log', encoding='utf-8', level=logging.DEBUG)
 
 
 BB_LIST = []
@@ -117,7 +118,7 @@ def get_register(regname):
         value = gdb.parse_and_eval(regname)
         return to_unsigned_long(value)
     except gdb.error as e:
-        print(e)
+        logging.debug(e)
         assert(regname[0] == '$')
         regname = regname[1:]
         try:
@@ -149,7 +150,7 @@ def save_bb_trace(status):
     with open("gdb.status", "w") as fp:
         fp.write(status + "\n")
     
-    print("[trapfuzzer] save_bb_trace {}".format(status))
+    logging.debug("[trapfuzzer] save_bb_trace {}".format(status))
 
 def save_crash_info():
     reg_info = gdb.execute("i r",to_string=True)
@@ -181,7 +182,7 @@ def read_memory(addr, length=0x10):
 def stop_handler(event):
     global COV_MODULE_INFO, BB_LIST, PROCESS_MAPS, EXIT_BB_LIST, tracer_sock, DEBUG,module_trace_list
     if DEBUG:
-        print(event)
+        logging.debug(event)
 
     if isinstance(event, gdb.SignalEvent):
         if event.stop_signal in ["SIGABRT", "SIGSEGV"]:
@@ -202,13 +203,13 @@ def stop_handler(event):
 
         if hit_mod is None:
             if DEBUG:
-                print("read {} maps".format(get_pid()))
+                logging.debug("read {} maps".format(get_pid()))
 
             PROCESS_MAPS = read_maps(get_pid())
             for m in PROCESS_MAPS:
                 if m.pathname:
                     if DEBUG:
-                        print(m.pathname)
+                        logging.debug(m.pathname)
                     for mt in module_trace_list:
                         if mt['image_base'] == 0 and mt['module_name'] == os.path.basename(m.pathname):
                             mt['image_base'] = m.start
@@ -221,13 +222,13 @@ def stop_handler(event):
                     break
         
         if hit_mod is None:
-            print("unknown module pc trigger sigtrap!")
+            logging.debug("unknown module pc trigger sigtrap!")
             save_and_data_exit("normal")
 
         offset = pc - hit_mod['image_base']
         
         if DEBUG:
-            print("offset: 0x{:X}".format(offset))
+            logging.debug("offset: 0x{:X}".format(offset))
 
         # exec to exit point
         if offset in EXIT_BB_LIST:
@@ -242,7 +243,7 @@ def stop_handler(event):
         set_register("pc", pc)
         mt['bbl-list'].append(offset)
     else:
-        print("Unknown event {}".format(event))
+        logging.debug("Unknown event {}".format(event))
 
 
 target_pid = None
