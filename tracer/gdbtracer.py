@@ -13,6 +13,11 @@ import signal
 import random
 import json
 
+class MyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, bytes):
+            return str(obj, encoding='utf-8')
+        return json.JSONEncoder.default(self, obj)
 
 class GdbTracer:
     def __init__(self, args=[], bbfiles=[], output="", module_names=[], logger=None):
@@ -67,7 +72,7 @@ class GdbTracer:
         config['module_info_list'] = module_info_list
 
         with open("{}/config.json".format(self.workspace), "w") as fp:
-            fp.write(json.dumps(config))
+            fp.write(json.dumps(config, cls=MyEncoder))
 
         self.server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)

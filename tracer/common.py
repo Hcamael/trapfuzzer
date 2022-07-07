@@ -11,6 +11,11 @@ RUN_TESTCASE = BASE_CMD + 2
 RESTART_AGENT = BASE_CMD + 3
 WRITE_TRACE_RESULT = BASE_CMD + 4
 
+class MyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, bytes):
+            return str(obj, encoding='utf-8')
+        return json.JSONEncoder.default(self, obj)
 
 class ExecStatus(Enum):
     NORMAL = 0xd0
@@ -31,8 +36,7 @@ class TraceInfo:
         return ret
 
     def to_json(self):
-        return json.dumps(self.to_dict())
-
+        return json.dumps(self.to_dict(), cls=MyEncoder)
 
 class ExecResult:
     def __init__(self, trace=[], status="", crash_info=""):
@@ -55,7 +59,7 @@ class ExecResult:
         for ti in self.trace:
             ret['trace'].append(ti.to_dict())
 
-        return json.dumps(ret)
+        return json.dumps(ret, cls=MyEncoder)
 
     def load_json(self, data):
         data = json.loads(data)

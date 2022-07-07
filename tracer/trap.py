@@ -67,6 +67,11 @@ PROC_MAP_REGEX = re.compile(
     # Filename: '  /usr/bin/synergyc'
     r'(?: +(.*))?')
 
+class MyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, bytes):
+            return str(obj, encoding='utf-8')
+        return json.JSONEncoder.default(self, obj)
 
 class MemoryMapping(object):
     def __init__(self, start, end, permissions, offset, major_device, minor_device, inode, pathname):
@@ -139,7 +144,7 @@ def save_bb_trace(status):
     global BB_LIST, module_trace_list
 
     with open("gdb.trace", "w") as fp:
-        fp.write(json.dumps(module_trace_list))
+        fp.write(json.dumps(module_trace_list, cls=MyEncoder))
 
     with open("gdb.status", "w") as fp:
         fp.write(status + "\n")

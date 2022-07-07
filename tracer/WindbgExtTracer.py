@@ -13,6 +13,11 @@ import signal
 import random
 import json
 
+class MyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, bytes):
+            return str(obj, encoding='utf-8')
+        return json.JSONEncoder.default(self, obj)
 
 class WindbgExtTracer:
     debug_mode = False
@@ -59,7 +64,7 @@ class WindbgExtTracer:
         config['server_sock_port'] = port
         config['is_fuzz_mode'] = 1
         with open(os.path.join(self.workspace, "config.json"), "w") as fp:
-            fp.write(json.dumps(config))
+            fp.write(json.dumps(config, cls=MyEncoder))
 
         if not self.debug_mode:
             process_stdout = open(os.path.join(self.workspace, "stdout.txt"), "w")

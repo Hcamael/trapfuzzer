@@ -45,6 +45,11 @@ PROC_MAP_REGEX = re.compile(
     # Filename: '  /usr/bin/synergyc'
     r'(?: +(.*))?')
 
+class MyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, bytes):
+            return str(obj, encoding='utf-8')
+        return json.JSONEncoder.default(self, obj)
 
 class MemoryMapping(object):
     def __init__(self, start, end, permissions, offset, major_device, minor_device, inode, pathname):
@@ -184,7 +189,7 @@ def stop_handler(event):
                     COV_MODULE_INFO['full_path'] = m.pathname
                     with open("config.json", "w") as fp:
                         config['coverage_module_full_path'] = m.pathname
-                        fp.write(json.dumps(config))
+                        fp.write(json.dumps(config, cls=MyEncoder))
                     break
 
         pc = get_register("$pc") - 1
